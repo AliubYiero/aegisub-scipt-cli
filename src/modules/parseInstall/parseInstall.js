@@ -32,7 +32,7 @@ ${ `[${ new Date().toLocaleTimeString() }]`.grey } ${ '插件成功安装:'.cyan
 ` );
 	};
 	
-	return yargsController.command( [ 'i', 'install' ],
+	return yargsController.command( [ 'i', 'install', 'add' ],
 		'将脚本拷贝到 Aegisub 脚本目录下',
 		( yargs ) => {
 			const filepath = yargs.argv._[1];
