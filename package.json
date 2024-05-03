@@ -1,12 +1,8 @@
 {
 	"name": "aegisub-script-cli",
 	"private": true,
-	"version": "1.0.3",
-	"scripts": {
-		"dev": "vite build -w",
-		"build": "vite build",
-		"preview": "vite preview"
-	},
+	"version": "1.0.4",
+	"scripts": {},
 	"bin": {
 		"aeg": "./src/main.js"
 	},

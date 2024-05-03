@@ -12,6 +12,7 @@ const { chain } = require( 'radash' );
 const { parseInstall } = require( './modules/parseInstall/parseInstall' );
 const { parseHelp } = require( './modules/parseHelp/parseHelp' );
 const { initCommand } = require( './modules/initCommand/initCommand' );
+const { parseUninstall } = require( './modules/parseUninstall/parseUninstall' );
 
 ( () => {
 	let yargsController = yargs( hideBin( process.argv ) );
@@ -20,6 +21,7 @@ const { initCommand } = require( './modules/initCommand/initCommand' );
 		initCommand,
 		parseHelp,
 		parseInstall,
+		parseUninstall,
 	);
 	yargsController = yargsParser( yargsController );
 	

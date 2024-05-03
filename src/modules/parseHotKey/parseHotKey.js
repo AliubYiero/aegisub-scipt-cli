@@ -165,4 +165,6 @@ const parseHotKey = ( argv ) => {
 
 module.exports = {
 	parseHotKey,
+	readHotKeyFile,
+	writeHotKeyFile,
 };
