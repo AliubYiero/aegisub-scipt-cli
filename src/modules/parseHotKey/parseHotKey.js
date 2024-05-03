@@ -27,7 +27,7 @@ const readHotKeyFile = () => {
  * @param {Object} hotkeyConfig
  * @param {string} hotkeyString
  *
- * @return {{isConflict: boolean, conflictTag?: string}}
+ * @return {{isConflict: boolean, conflictTag?: string, conflictHotKey?: string}}
  * */
 const checkExistHotKeyConflict = ( hotkeyConfig, hotkeyString ) => {
 	for ( let scriptName in hotkeyConfig['Default'] ) {
@@ -38,6 +38,7 @@ const checkExistHotKeyConflict = ( hotkeyConfig, hotkeyString ) => {
 			return {
 				isConflict: true,
 				conflictTag: scriptName,
+				conflictHotKey: hotkeyString,
 			};
 		}
 	}
@@ -49,13 +50,14 @@ const checkExistHotKeyConflict = ( hotkeyConfig, hotkeyString ) => {
 /**
  * 处理按键冲突
  *
- * @param {{isConflict: boolean, conflictTag?: string}}  conflictConfig
+ * @param {{isConflict: boolean, conflictTag?: string, conflictHotKey?: string}}  conflictConfig
  * @param {Object} hotkeyConfig
+ * @return {Promise<boolean>}
  * */
 const handleButtonConflict = async ( conflictConfig, hotkeyConfig ) => {
 	// 如果不存在按键冲突, 直接退出
 	if ( !conflictConfig.isConflict ) {
-		return;
+		return false;
 	}
 	
 	/**
@@ -74,7 +76,7 @@ const handleButtonConflict = async ( conflictConfig, hotkeyConfig ) => {
 	};
 	
 	// 进行提示
-	console.log( `当前热键与指令 ${ conflictConfig.conflictTag.cyan } 存在冲突, 请进行处理... ` );
+	console.log( `当前热键 ${ conflictConfig.conflictHotKey.cyan } 与指令 ${ conflictConfig.conflictTag.cyan } 存在冲突, 请进行处理... ` );
 	
 	// 让用户进行选择
 	const value = await prompts( {
@@ -112,6 +114,7 @@ const handleButtonConflict = async ( conflictConfig, hotkeyConfig ) => {
 		case ConflictTypeEnum.Coexisting:
 			break;
 	}
+	return isExist;
 };
 
 /**

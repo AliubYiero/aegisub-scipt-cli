@@ -50,10 +50,7 @@ ${ `[${ new Date().toLocaleTimeString() }]`.grey } ${ '插件成功安装:'.cyan
 				} );
 			
 		},
-		( argv ) => {
-			// 写入文件
-			copyFile( argv );
-			
+		async ( argv ) => {
 			// 如果有热键更改, 进行热键添加
 			// 只支持 Shift / Alt / Ctrl + 数字/26位字母 (不支持符号, 小键盘数字...)
 			// 只支持, 将脚本名写到 script_name 的脚本; 不支持有子菜单的脚本
@@ -61,8 +58,11 @@ ${ `[${ new Date().toLocaleTimeString() }]`.grey } ${ '插件成功安装:'.cyan
 				( argv.hotkey || argv.k )
 				&& ( typeof argv.hotkey === 'string' || typeof argv.k === 'string' )
 			) {
-				parseHotKey( argv );
+				await parseHotKey( argv );
 			}
+			
+			// 写入文件
+			copyFile( argv );
 			
 			// 如果有监听, 进行文件监听
 			if ( argv.watch || argv.w ) {
