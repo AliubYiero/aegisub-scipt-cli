@@ -12,7 +12,7 @@ const { join, basename } = require( 'path' );
  * */
 const getTargetFilePath = ( filename ) => {
 	filename = normalizeFileNameParameters( filename );
-	const aegisubExePath = require( '../../config/globalConfig.json' ).aegisubPath;
+	const aegisubExePath = require( '../../config/globalConfig.json' ).activeAegisub;
 	return join( aegisubExePath, '/automation/autoload/', basename( filename ) );
 };
 

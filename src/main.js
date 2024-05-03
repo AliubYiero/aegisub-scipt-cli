@@ -13,6 +13,7 @@ const { parseInstall } = require( './modules/parseInstall/parseInstall' );
 const { parseHelp } = require( './modules/parseHelp/parseHelp' );
 const { initCommand } = require( './modules/initCommand/initCommand' );
 const { parseUninstall } = require( './modules/parseUninstall/parseUninstall' );
+const { parseConfig } = require( './modules/parseConfig/parseConfig' );
 
 ( () => {
 	let yargsController = yargs( hideBin( process.argv ) );
@@ -22,6 +23,7 @@ const { parseUninstall } = require( './modules/parseUninstall/parseUninstall' );
 		parseHelp,
 		parseInstall,
 		parseUninstall,
+		parseConfig,
 	);
 	yargsController = yargsParser( yargsController );
 	

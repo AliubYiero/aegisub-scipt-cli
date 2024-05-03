@@ -13,7 +13,7 @@ const prompts = require( 'prompts' );
  * */
 const readHotKeyFile = () => {
 	/** @type {string} */
-	const hotkeyFilePath = join( globalConfig.aegisubPath, 'hotkey.json' );
+	const hotkeyFilePath = join( globalConfig.activeAegisub, 'hotkey.json' );
 	
 	// 读取热键文件
 	const hotkeyConfig = readJSONSync( hotkeyFilePath );
@@ -215,7 +215,7 @@ const updateHotKeyConfig = ( options ) => {
  * */
 const writeHotKeyFile = ( updatedHotKeyConfig ) => {
 	/** @type {string} */
-	const hotkeyFilePath = join( globalConfig.aegisubPath, 'hotkey.json' );
+	const hotkeyFilePath = join( globalConfig.activeAegisub, 'hotkey.json' );
 	
 	writeJSONSync( hotkeyFilePath, updatedHotKeyConfig, {
 		spaces: '\t',
