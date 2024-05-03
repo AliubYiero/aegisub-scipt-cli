@@ -1,0 +1,22 @@
+{
+	"name": "aegisub-script-cli",
+	"private": true,
+	"version": "0.0.0",
+	"scripts": {
+		"dev": "vite build -w",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"bin": {
+		"aeg": "./src/main.js"
+	},
+	"dependencies": {
+		"@types/fs-extra": "^11.0.4",
+		"@types/node": "^20.12.8",
+		"@types/yargs": "^17.0.32",
+		"colors": "^1.4.0",
+		"fs-extra": "^11.2.0",
+		"radash": "^12.1.0",
+		"yargs": "^17.7.2"
+	}
+}
