@@ -1,12 +1,7 @@
-const { chain } = require( 'radash' );
 const { parseTerminalPath } = require( '../../utils/parseTerminalPath' );
 const { basename, join } = require( 'path' );
-const { getTargetFilePath } = require( '../../utils/getTargetFilePath' );
 const { readJSONSync, writeJSONSync } = require( 'fs-extra' );
 const globalConfig = require( '../../../config/globalConfig.json' );
-const {
-	readTargetFileName,
-} = require( '../../utils/readTargetFileName' );
 const { readFileSync } = require( 'fs' );
 const colors = require( 'colors' );
 

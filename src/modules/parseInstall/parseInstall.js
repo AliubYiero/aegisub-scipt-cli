@@ -2,7 +2,6 @@ const { parseTerminalPath } = require( '../../utils/parseTerminalPath' );
 const { join, basename } = require( 'path' );
 const { copySync, watchFile, readJSONSync } = require( 'fs-extra' );
 const colors = require( 'colors' );
-const { getTargetFilePath } = require( '../../utils/getTargetFilePath' );
 const { readTargetFileName } = require( '../../utils/readTargetFileName' );
 const { parseHotKey } = require( '../parseHotKey/parseHotKey' );
 
@@ -70,7 +69,7 @@ ${ `[${ new Date().toLocaleTimeString() }]`.grey } ${ '插件成功安装:'.cyan
 				console.log( '开始监听文件更改...'.cyan );
 				
 				// 获取原始路径
-				const filePath = parsePath( argv.filepath );
+				const filePath = parseTerminalPath( argv.filepath );
 				
 				// 每 1s 查询一次文件更改, 如果文件更改, 则进行复制
 				watchFile( filePath,

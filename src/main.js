@@ -10,12 +10,15 @@ const yargs = require( 'yargs/yargs' );
 const { hideBin } = require( 'yargs/helpers' );
 const { chain } = require( 'radash' );
 const { parseInstall } = require( './modules/parseInstall/parseInstall' );
+const { parseHelp } = require( './modules/parseHelp/parseHelp' );
+const { initCommand } = require( './modules/initCommand/initCommand' );
 
 ( () => {
 	let yargsController = yargs( hideBin( process.argv ) );
 	
 	const yargsParser = chain(
-		parseInstall,
+		initCommand,
+		parseHelp,
 		parseInstall,
 	);
 	yargsController = yargsParser( yargsController );
