@@ -4,6 +4,7 @@ const { readJSONSync, writeJSONSync } = require( 'fs-extra' );
 const globalConfig = require( '../../../config/globalConfig.json' );
 const { readFileSync } = require( 'fs' );
 const colors = require( 'colors' );
+const prompts = require( 'prompts' );
 
 /**
  * 读取 Aegisub 热键配置文件
@@ -18,6 +19,99 @@ const readHotKeyFile = () => {
 	const hotkeyConfig = readJSONSync( hotkeyFilePath );
 	
 	return hotkeyConfig;
+};
+
+/**
+ * 检查是否存在热键冲突
+ *
+ * @param {Object} hotkeyConfig
+ * @param {string} hotkeyString
+ *
+ * @return {{isConflict: boolean, conflictTag?: string}}
+ * */
+const checkExistHotKeyConflict = ( hotkeyConfig, hotkeyString ) => {
+	for ( let scriptName in hotkeyConfig['Default'] ) {
+		/** @type {Array<string>} */
+		const hotkeyList = hotkeyConfig['Default'][scriptName];
+		
+		if ( hotkeyList.includes( hotkeyString ) ) {
+			return {
+				isConflict: true,
+				conflictTag: scriptName,
+			};
+		}
+	}
+	return {
+		isConflict: false,
+	};
+};
+
+/**
+ * 处理按键冲突
+ *
+ * @param {{isConflict: boolean, conflictTag?: string}}  conflictConfig
+ * @param {Object} hotkeyConfig
+ * */
+const handleButtonConflict = async ( conflictConfig, hotkeyConfig ) => {
+	// 如果不存在按键冲突, 直接退出
+	if ( !conflictConfig.isConflict ) {
+		return;
+	}
+	
+	/**
+	 * 冲突类型枚举
+	 *
+	 * @type {{
+	 *     Focus: 0,
+	 *     Coexisting: 1,
+	 *     Abandon: 2,
+	 * }}
+	 * */
+	const ConflictTypeEnum = {
+		Focus: 0,
+		Coexisting: 1,
+		Abandon: 2,
+	};
+	
+	// 进行提示
+	console.log( `当前热键与指令 ${ conflictConfig.conflictTag.cyan } 存在冲突, 请进行处理... ` );
+	
+	// 让用户进行选择
+	const value = await prompts( {
+		type: 'select',
+		message: '冲突处理: ',
+		name: 'conflict',
+		choices: [
+			{
+				title: '同时存在',
+				description: '不删除原有热键, 写入当前热键, 同时保持两个绑定值的存在.',
+				value: ConflictTypeEnum.Coexisting,
+			},
+			{
+				title: '强制覆盖',
+				description: '删除原有热键, 写入当前热键. ',
+				value: ConflictTypeEnum.Focus,
+			},
+			{
+				title: '放弃写入',
+				description: '放弃写入当前热键. ',
+				value: ConflictTypeEnum.Abandon,
+			},
+		],
+		initial: 0,
+	} );
+	
+	let isExist = false;
+	switch ( value.conflict ) {
+		case ConflictTypeEnum.Abandon:
+			isExist = true;
+			break;
+		case ConflictTypeEnum.Focus:
+			delete hotkeyConfig['Default'][conflictConfig.conflictTag];
+			break;
+		case ConflictTypeEnum.Coexisting:
+			break;
+	}
 };
 
 /**
@@ -66,7 +160,7 @@ const readScriptName = ( filename ) => {
  * 解析输入的配置项字符串.
  *
  * Rules:
- * 1. 首字母大写, 默认顺序为(但是不影响使用):  Ctrl / Alt / Shift
+ * 1. 首字母大写, 默认顺序为(顺序错了Aeg无法识别):  Ctrl / Alt / Shift
  * 2. 使用 - 连接
  * 3. 字母大写
  *
@@ -141,15 +235,22 @@ const logSuccessMeg = ( hotKey, baseName, scriptName ) => {
  *
  * @param {import('yargs').Arguments<T>} argv
  * */
-const parseHotKey = ( argv ) => {
+const parseHotKey = async ( argv ) => {
 	// 读取 Aegisub 热键配置文件
 	const hotkeyConfig = readHotKeyFile();
+	// 解析输入的配置项字符串.
+	const hotKeyString = parseHotKeyString( argv.hotkey || argv.k );
+	// 检查是否存在按键冲突
+	const existHotKeyConflict = checkExistHotKeyConflict( hotkeyConfig, hotKeyString );
+	// 处理按键冲突
+	const isExist = await handleButtonConflict( existHotKeyConflict, hotkeyConfig );
+	if ( isExist ) {
+		return;
+	}
 	// 读取输入的文件名(不含后缀)
 	const baseName = readInputFileName( argv.filepath );
 	// 读取输入的文件的 script_name
 	const scriptName = readScriptName( argv.filepath );
-	// 解析输入的配置项字符串.
-	const hotKeyString = parseHotKeyString( argv.hotkey || argv.k );
 	// 更新配置对象
 	const updatedHotKeyConfig = updateHotKeyConfig( {
 		hotkeyConfig,
